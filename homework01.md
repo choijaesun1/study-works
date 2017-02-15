@@ -94,12 +94,43 @@ DBMS의 리소스는 다른 서비스와 공유해 사용하는 경우가 많기
 따라서 maxWait 값이 중요함.
 
 #### MaxWait(Connection 이 반환될 때까지 이만큼 기다리겠다) Value
- - Too Long : 사용자가 인내할 수 있는 시간을 넘어서는 maxWait 값은 아무런 의미가 없다. 이미 요청자는 페이지를 떠났을 것임
+ - Too Long :
+  - Tomcat Thread Pool 의 Thread가 할당 받지 못하고 오랜시간 기다려야 할 수 있다.
+  - 사용자가 인내할 수 있는 시간을 넘어서는 maxWait 값은 아무런 의미가 없다. 이미 요청자는 페이지를 떠났을 것임
  - Too short : 과부하 시 커넥션 풀에 여분의 커넥션이 없을 때마다 오류가 반환
 
 ###### 따라서 애플리케이션에서 주로 실행되는 쿼리의 성격, 사용자가 대기 가능한 시간, DBMS와 애플리케이션 서버의 자원, 발생 가능한 예외 상황, Tomcat 설정 등 많은 요소를 고려하여 설정해야함!
 
 ## 4. Tomcat Thread Pool
+(참조 : http://jang8584.tistory.com/14)
+### Tomcat Thread Pool?
+ - 각 요청에 대해 쓰레드를 생성하여 사용하고 난 후 계속해서 **재사용** 할 수 있도록 사용된 쓰레드를 "open" 상태로 계속 유지 및 관리
+   - 이로부터 얻는 효과 : 반복적인 쓰레드의 생성 및 소멸로 인해 야기되는 문제를 해결
+
+
+ - Thread 수는 실제 Active User 수를 뜻함. 즉 순간 처리 가능한 Transaction 의 수.
+
+### Configuration
+ - server.xml의 <Connector/> 설정으로 설정
+ - 예시
+ ```xml
+ <Connector port="8080" address="localhost" maxThreads="250" maxHttpHeaderSize="8192" maxSpareThreads="75"
+    connectionTimeout="20000" disableUploadTimeout="true" ... />
+ ```
+ - Tomcat 8 Default 설정 - http://tomcat.apache.org/tomcat-8.0-doc/config/executor.html
+
 ## 5. Tomcat Configuration, option, 성능 등
+
+### Connector Configuration
+
+ - accepCount
+  - HTTP request가 들어왔을때, idle thread가 없으면 queue에서 idle thread가 생길때 까지 요청을 대기하는 queue의 길이
+  - Queue의 길이를 길게 주지말고 짧게 주어서 장애 상태를 알리는 게 좋다. 안그러면 다른 장애로 이어질 수 있음.
+
+ - maxThread
+   - Transaction 처리 속도에 따라 설정. 성능 테스트를 통해서 튜닝하는 것이 좋다.
+
+ -
+
 ## 6. PaaS, SaaS
 ## 7. GTM, GSLB
