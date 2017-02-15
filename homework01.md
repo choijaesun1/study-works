@@ -113,7 +113,7 @@ DBMS의 리소스는 다른 서비스와 공유해 사용하는 경우가 많기
 ### Configuration
  - server.xml의 <Connector/> 설정으로 설정
  - 예시
- ```xml
+ ```
  <Connector port="8080" address="localhost" maxThreads="250" maxHttpHeaderSize="8192" maxSpareThreads="75"
     connectionTimeout="20000" disableUploadTimeout="true" ... />
  ```
